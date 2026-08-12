@@ -1,20 +1,11 @@
-// هذا هو التخطيط الرئيسي للتطبيق
-import type { Metadata } from 'next'
-import './globals.css'
+// components/supervisor/BracketView.tsx
+'use client'
 
-export const metadata: Metadata = {
-  title: 'منصة المسابقات الطلابية',
-  description: 'منصة المسابقات المباشرة عن بعد',
-}
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function BracketView({ competitionId }: { competitionId: string }) {
   return (
-    <html lang="ar" dir="rtl">
-      <body>{children}</body>
-    </html>
+    <div className="bg-white rounded-2xl shadow-lg p-6">
+      <h2 className="text-2xl font-bold mb-4">🏆 شجرة البطولة</h2>
+      <p>ستظهر شجرة البطولة هنا بعد انتهاء مرحلة الفرق</p>
+    </div>
   )
 }
