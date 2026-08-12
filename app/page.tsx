@@ -1,9 +1,8 @@
-// الصفحة الرئيسية - توجيه المستخدمين
 import Link from 'next/link'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-4">
       <div className="text-center">
         <div className="text-8xl mb-8">🏆</div>
         <h1 className="text-4xl font-bold text-white mb-4">
@@ -13,7 +12,7 @@ export default function HomePage() {
           نظام المسابقات المباشرة للفرق
         </p>
         
-        <div className="flex gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link 
             href="/login"
             className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold text-xl hover:scale-105 transition"
@@ -22,7 +21,7 @@ export default function HomePage() {
           </Link>
           <Link 
             href="/supervisor/login"
-            className="bg-blue-700 text-white px-8 py-4 rounded-xl font-bold text-xl hover:scale-105 transition"
+            className="bg-blue-700 text-white px-8 py-4 rounded-xl font-bold text-xl hover:scale-105 transition border-2 border-white"
           >
             دخول المشرفين
           </Link>
