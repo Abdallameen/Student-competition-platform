@@ -15,23 +15,21 @@ export default function SupervisorLogin() {
     setIsLoading(true)
 
     try {
-      // الطريقة الصحيحة للاستعلام
       const { data, error } = await supabase
         .from('supervisors')
         .select('*')
         .eq('username', username)
         .eq('password', password)
-        .maybeSingle()
+        .single()
 
       if (error) {
-        console.error('Supabase error:', error)
-        setError('خطأ في الاتصال بقاعدة البيانات')
+        console.error('Error:', error)
+        setError('اسم المستخدم أو كلمة المرور غير صحيحة')
         setIsLoading(false)
         return
       }
 
       if (data) {
-        // تسجيل دخول ناجح
         localStorage.setItem('supervisor_username', data.username)
         localStorage.setItem('supervisor_id', data.id)
         window.location.href = '/supervisor/dashboard'
@@ -39,7 +37,7 @@ export default function SupervisorLogin() {
         setError('اسم المستخدم أو كلمة المرور غير صحيحة')
       }
     } catch (error) {
-      console.error('Login error:', error)
+      console.error('Error:', error)
       setError('حدث خطأ غير متوقع')
     } finally {
       setIsLoading(false)
@@ -51,12 +49,8 @@ export default function SupervisorLogin() {
       <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">👨‍💼</div>
-          <h1 className="text-3xl font-bold text-gray-800">
-            دخول المشرف
-          </h1>
-          <p className="text-gray-600 mt-2">
-            لوحة تحكم المسابقات
-          </p>
+          <h1 className="text-3xl font-bold text-gray-800">دخول المشرف</h1>
+          <p className="text-gray-600 mt-2">لوحة تحكم المسابقات</p>
         </div>
 
         {error && (
@@ -67,28 +61,24 @@ export default function SupervisorLogin() {
 
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <label className="block text-sm font-bold mb-2">
-              اسم المستخدم
-            </label>
+            <label className="block text-sm font-bold mb-2">اسم المستخدم</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full p-3 border-2 border-gray-300 rounded-xl text-center text-lg focus:border-blue-500 focus:outline-none"
+              className="w-full p-3 border-2 border-gray-300 rounded-xl text-center text-lg"
               placeholder="admin1"
               required
             />
           </div>
           
           <div className="mb-6">
-            <label className="block text-sm font-bold mb-2">
-              كلمة المرور
-            </label>
+            <label className="block text-sm font-bold mb-2">كلمة المرور</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border-2 border-gray-300 rounded-xl text-center text-lg focus:border-blue-500 focus:outline-none"
+              className="w-full p-3 border-2 border-gray-300 rounded-xl text-center text-lg"
               placeholder="••••••••"
               required
             />
@@ -104,7 +94,6 @@ export default function SupervisorLogin() {
         </form>
 
         <div className="mt-4 text-center text-sm text-gray-500">
-          <p>للتجربة:</p>
           <p>admin1 / admin123</p>
         </div>
       </div>
