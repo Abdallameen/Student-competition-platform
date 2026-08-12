@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 export default function SupervisorLogin() {
@@ -9,48 +8,39 @@ export default function SupervisorLogin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
 
-    console.log('Trying login with:', username, password)
-
     try {
-      // التحقق من المشرف
+      // الطريقة الصحيحة للاستعلام
       const { data, error } = await supabase
         .from('supervisors')
         .select('*')
-        .eq('username', username.trim())
-        .eq('password_hash', password.trim())
-        .single()
-
-      console.log('Response:', data, error)
+        .eq('username', username)
+        .eq('password_hash', password)
+        .maybeSingle()
 
       if (error) {
-        console.error('Login error:', error)
-        setError('اسم المستخدم أو كلمة المرور غير صحيحة')
+        console.error('Supabase error:', error)
+        setError('خطأ في الاتصال بقاعدة البيانات')
         setIsLoading(false)
         return
       }
 
       if (data) {
-        console.log('Login successful:', data)
-        
-        // حفظ معلومات المشرف
+        // تسجيل دخول ناجح
         localStorage.setItem('supervisor_username', data.username)
         localStorage.setItem('supervisor_id', data.id)
-        
-        // التوجيه إلى لوحة التحكم
         window.location.href = '/supervisor/dashboard'
       } else {
         setError('اسم المستخدم أو كلمة المرور غير صحيحة')
       }
     } catch (error) {
       console.error('Login error:', error)
-      setError('حدث خطأ في تسجيل الدخول')
+      setError('حدث خطأ غير متوقع')
     } finally {
       setIsLoading(false)
     }
