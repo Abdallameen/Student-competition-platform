@@ -1,0 +1,22 @@
+-- Student Competition Platform - Initial Schema
+-- This file is for documentation purposes
+-- The actual database has been created directly in Supabase SQL Editor
+
+-- Tables created:
+-- 1. supervisors
+-- 2. competitions
+-- 3. teams
+-- 4. students
+-- 5. team_members
+-- 6. questions
+-- 7. question_options
+-- 8. rounds
+-- 9. matches
+-- 10. match_participants
+-- 11. buzzers
+-- 12. answers
+-- 13. scores
+-- 14. powerups
+-- 15. team_powerups
+-- 16. events
+-- 17. settings
