@@ -17,6 +17,7 @@ export default function AnswerReview({ buzzer, question, onAnswerReviewed }: Ans
     setIsSubmitting(true)
 
     try {
+      // إنشاء سجل الإجابة
       const { data: answerData, error } = await supabase
         .from('answers')
         .insert({
@@ -34,17 +35,35 @@ export default function AnswerReview({ buzzer, question, onAnswerReviewed }: Ans
       if (error) throw error
 
       if (status === 'correct') {
-        // تحديث نقاط الفريق
-        await supabase
+        // جلب نقاط الفريق الحالية
+        const { data: teamData } = await supabase
           .from('teams')
-          .update({ total_points: supabase.raw(`total_points + ${question.points}`) })
+          .select('total_points')
           .eq('id', buzzer.team_id)
+          .single()
 
-        // تحديث نقاط الطالب
-        await supabase
+        if (teamData) {
+          // تحديث نقاط الفريق
+          await supabase
+            .from('teams')
+            .update({ total_points: teamData.total_points + question.points })
+            .eq('id', buzzer.team_id)
+        }
+
+        // جلب نقاط الطالب الحالية
+        const { data: studentData } = await supabase
           .from('students')
-          .update({ personal_points: supabase.raw(`personal_points + ${question.points}`) })
+          .select('personal_points')
           .eq('id', buzzer.student_id)
+          .single()
+
+        if (studentData) {
+          // تحديث نقاط الطالب
+          await supabase
+            .from('students')
+            .update({ personal_points: studentData.personal_points + question.points })
+            .eq('id', buzzer.student_id)
+        }
       }
 
       onAnswerReviewed(answerData)
