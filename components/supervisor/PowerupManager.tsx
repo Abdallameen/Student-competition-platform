@@ -1,20 +1,11 @@
-// هذا هو التخطيط الرئيسي للتطبيق
-import type { Metadata } from 'next'
-import './globals.css'
+// components/supervisor/PowerupManager.tsx
+'use client'
 
-export const metadata: Metadata = {
-  title: 'منصة المسابقات الطلابية',
-  description: 'منصة المسابقات المباشرة عن بعد',
-}
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function PowerupManager({ competitionId }: { competitionId: string }) {
   return (
-    <html lang="ar" dir="rtl">
-      <body>{children}</body>
-    </html>
+    <div className="bg-white rounded-2xl shadow-lg p-6">
+      <h2 className="text-2xl font-bold mb-4">إدارة القدرات</h2>
+      <p>سيتم إضافة إدارة القدرات هنا</p>
+    </div>
   )
 }
