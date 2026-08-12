@@ -20,7 +20,7 @@ export default function SupervisorLogin() {
         .from('supervisors')
         .select('*')
         .eq('username', username)
-        .eq('password_hash', password)
+        .eq('password', password)
         .maybeSingle()
 
       if (error) {
