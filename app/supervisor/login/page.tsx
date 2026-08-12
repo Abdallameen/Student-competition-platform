@@ -94,7 +94,7 @@ export default function SupervisorLogin() {
         </form>
 
         <div className="mt-4 text-center text-sm text-gray-500">
-          <p>admin1 / admin123</p>
+          <p>admin / admin</p>
         </div>
       </div>
     </div>
