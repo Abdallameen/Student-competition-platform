@@ -9,8 +9,10 @@ export default function SupervisorDashboard() {
   const [students, setStudents] = useState<any[]>([])
   const [teams, setTeams] = useState<any[]>([])
   const [questions, setQuestions] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    // التحقق من تسجيل الدخول
     const username = localStorage.getItem('supervisor_username')
     if (!username) {
       window.location.href = '/supervisor/login'
@@ -21,45 +23,54 @@ export default function SupervisorDashboard() {
   }, [])
 
   const fetchData = async () => {
-    // جلب المسابقة
-    const { data: comp } = await supabase
-      .from('competitions')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
-
-    if (comp) {
-      setCompetition(comp)
-
-      // جلب الطلاب
-      const { data: studentsData } = await supabase
-        .from('students')
-        .select(`
-          *,
-          teams(name, color)
-        `)
-        .eq('competition_id', comp.id)
-
-      if (studentsData) setStudents(studentsData)
-
-      // جلب الفرق
-      const { data: teamsData } = await supabase
-        .from('teams')
+    setIsLoading(true)
+    
+    try {
+      // جلب المسابقة
+      const { data: comp } = await supabase
+        .from('competitions')
         .select('*')
-        .eq('competition_id', comp.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
 
-      if (teamsData) setTeams(teamsData)
+      if (comp) {
+        setCompetition(comp)
 
-      // جلب الأسئلة
-      const { data: questionsData } = await supabase
-        .from('questions')
-        .select('*')
-        .eq('competition_id', comp.id)
+        // جلب الطلاب
+        const { data: studentsData } = await supabase
+          .from('students')
+          .select(`
+            *,
+            teams(name, color)
+          `)
+          .eq('competition_id', comp.id)
 
-      if (questionsData) setQuestions(questionsData)
+        if (studentsData) setStudents(studentsData)
+
+        // جلب الفرق
+        const { data: teamsData } = await supabase
+          .from('teams')
+          .select('*')
+          .eq('competition_id', comp.id)
+
+        if (teamsData) setTeams(teamsData)
+
+        // جلب الأسئلة
+        const { data: questionsData } = await supabase
+          .from('questions')
+          .select('*')
+          .eq('competition_id', comp.id)
+
+        if (questionsData) setQuestions(questionsData)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
+
 
   const createCompetition = async () => {
     const name = prompt('اسم المسابقة:')
