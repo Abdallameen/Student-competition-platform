@@ -1,33 +1,59 @@
-// الصفحة الرئيسية - توجيه المستخدمين
-import Link from 'next/link'
+'use client'
 
-export default function HomePage() {
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
+
+export default function SupervisorLogin() {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const router = useRouter()
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // تحقق من بيانات المشرف
+    const { data, error } = await supabase
+      .from('supervisors')
+      .select('*')
+      .eq('username', username)
+      .single()
+
+    if (data) {
+      // هنا يجب التحقق من كلمة المرور
+      router.push('/supervisor/dashboard')
+    }
+  }
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-      <div className="text-center">
-        <div className="text-8xl mb-8">🏆</div>
-        <h1 className="text-4xl font-bold text-white mb-4">
-          منصة المسابقات الطلابية
-        </h1>
-        <p className="text-xl text-white/80 mb-8">
-          نظام المسابقات المباشرة للفرق
-        </p>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <form onSubmit={handleLogin} className="bg-white p-8 rounded-2xl shadow-lg w-96">
+        <h1 className="text-2xl font-bold mb-6 text-center">دخول المشرف</h1>
         
-        <div className="flex gap-4 justify-center">
-          <Link 
-            href="/login"
-            className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold text-xl hover:scale-105 transition"
-          >
-            دخول الطلاب
-          </Link>
-          <Link 
-            href="/supervisor/login"
-            className="bg-blue-700 text-white px-8 py-4 rounded-xl font-bold text-xl hover:scale-105 transition"
-          >
-            دخول المشرفين
-          </Link>
+        <div className="mb-4">
+          <label className="block mb-2">اسم المستخدم</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full p-3 border rounded-lg"
+          />
         </div>
-      </div>
+        
+        <div className="mb-6">
+          <label className="block mb-2">كلمة المرور</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 border rounded-lg"
+          />
+        </div>
+        
+        <button className="w-full bg-blue-500 text-white py-3 rounded-lg font-bold">
+          دخول
+        </button>
+      </form>
     </div>
   )
 }
