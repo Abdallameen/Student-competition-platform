@@ -6,9 +6,9 @@ import { supabase } from '@/lib/supabase'
 export default function SupervisorDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
   const [competition, setCompetition] = useState<any>(null)
-  const [students, setStudents] = useState([])
-  const [teams, setTeams] = useState([])
-  const [questions, setQuestions] = useState([])
+  const [students, setStudents] = useState<any[]>([])
+  const [teams, setTeams] = useState<any[]>([])
+  const [questions, setQuestions] = useState<any[]>([])
 
   useEffect(() => {
     const username = localStorage.getItem('supervisor_username')
