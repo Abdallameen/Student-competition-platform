@@ -7,95 +7,89 @@ export default function SupervisorLogin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [debug, setDebug] = useState('')
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    setIsLoading(true)
+    setDebug('بدء المحاولة...')
 
     try {
-      const { data, error } = await supabase
+      // جلب كل المشرفين
+      const { data: allSupervisors, error: fetchError } = await supabase
         .from('supervisors')
         .select('*')
-        .eq('username', username)
-        .eq('password', password)
-        .single()
 
-      if (error) {
-        console.error('Error:', error)
-        setError('اسم المستخدم أو كلمة المرور غير صحيحة')
-        setIsLoading(false)
+      setDebug(JSON.stringify({ allSupervisors, fetchError }, null, 2))
+
+      if (fetchError) {
+        setError('خطأ في جلب البيانات: ' + fetchError.message)
         return
       }
 
-      if (data) {
-        localStorage.setItem('supervisor_username', data.username)
-        localStorage.setItem('supervisor_id', data.id)
+      if (!allSupervisors || allSupervisors.length === 0) {
+        setError('لا يوجد مشرفين في قاعدة البيانات')
+        return
+      }
+
+      // البحث عن المشرف
+      const supervisor = allSupervisors.find(
+        (s: any) => s.username === username && s.password === password
+      )
+
+      if (supervisor) {
+        localStorage.setItem('supervisor_username', supervisor.username)
         window.location.href = '/supervisor/dashboard'
       } else {
-        setError('اسم المستخدم أو كلمة المرور غير صحيحة')
+        setError('بيانات غير صحيحة')
+        setDebug('البيانات المدخلة: ' + username + ' / ' + password)
       }
-    } catch (error) {
-      console.error('Error:', error)
-      setError('حدث خطأ غير متوقع')
-    } finally {
-      setIsLoading(false)
+    } catch (error: any) {
+      setError('خطأ غير متوقع: ' + error.message)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
-        <div className="text-center mb-8">
-          <div className="text-6xl mb-4">👨‍💼</div>
-          <h1 className="text-3xl font-bold text-gray-800">دخول المشرف</h1>
-          <p className="text-gray-600 mt-2">لوحة تحكم المسابقات</p>
-        </div>
-
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full">
+        <h1 className="text-2xl font-bold text-center mb-6">دخول المشرف</h1>
+        
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-center">
+          <div className="bg-red-100 text-red-700 p-3 rounded-lg mb-4">
             {error}
           </div>
         )}
 
         <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label className="block text-sm font-bold mb-2">اسم المستخدم</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full p-3 border-2 border-gray-300 rounded-xl text-center text-lg"
-              placeholder="admin1"
-              required
-            />
-          </div>
-          
-          <div className="mb-6">
-            <label className="block text-sm font-bold mb-2">كلمة المرور</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border-2 border-gray-300 rounded-xl text-center text-lg"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-          
-          <button 
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="admin1"
+            className="w-full p-3 border rounded-lg mb-3 text-center"
+            required
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="admin123"
+            className="w-full p-3 border rounded-lg mb-4 text-center"
+            required
+          />
+          <button
             type="submit"
-            disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-xl hover:bg-blue-700 transition disabled:bg-gray-400"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg font-bold"
           >
-            {isLoading ? 'جاري الدخول...' : 'دخول'}
+            دخول
           </button>
         </form>
 
-        <div className="mt-4 text-center text-sm text-gray-500">
-          <p>admin / admin</p>
-        </div>
+        {debug && (
+          <div className="mt-4 p-3 bg-gray-100 rounded-lg text-xs overflow-auto max-h-40">
+            <pre>{debug}</pre>
+          </div>
+        )}
       </div>
     </div>
   )
